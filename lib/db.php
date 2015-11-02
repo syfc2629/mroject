@@ -18,6 +18,11 @@ class db {
 		if ($this->conn != null)
 			$this->conn = null;
 	}
+	
+	// Returns the connection
+	public function pdo() {
+		return $this->conn;
+	}
 
 }
 ?>

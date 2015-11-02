@@ -76,7 +76,7 @@
 			function showRegisterDialog() {
 				$login = utils.showDialog("dialogs/register.html", "Create new account", loginFormLoaded);
 				$login.dialog("option", "width", 550);
-				$login.dialog("option", "height", 450);
+				$login.dialog("option", "height", 505);
 				$login.dialog("option", "closeOnEscape", false );
 				$login.addClass("no-close");
 				
@@ -88,10 +88,11 @@
 							primary: "ui-icon-check"
 						},
 						click: function() {
-							var username = $("#name").val();
+							var fullname = $("#fullname").val();
+							var username = $("#username").val();
 							var password = $("#password").val();
 							var email = $("#email").val();
-							user.createAccount(username, password, email, function(result) {
+							user.createAccount(fullname, username, password, email, function(result) {
 								if (result != "ok")
 									utils.showErrorMessage("Error", "Unable to create account: " + result, showLoginDialog);
 								else
