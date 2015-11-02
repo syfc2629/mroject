@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Mroject: Login</title>
+	<link rel="stylesheet" href="css/jquery-ui.css">
+	<link rel="stylesheet" href="css/jquery-ui.theme.css">			
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/loading.css">
+	<link rel="stylesheet" href="css/login.css">
+		
+	<script src="js/jquery.js"></script>
+	<script src="js/jquery-ui.js"></script>
+	<script src="js/utils.js"></script>
+	<script src="js/user.js"></script>
+  </head>
+
+<body>
+   	<script>
+	
+		$(document).ready(function(){
+		
+			showLoginDialog();
+			
+			function showLoginDialog() {
+				$login = utils.showDialog("dialogs/login.html", "Login in", loginFormLoaded);
+				$login.dialog("option", "width", 550);
+				$login.dialog("option", "height", 400);
+				$login.dialog("option", "closeOnEscape", false );
+				$login.addClass("no-close");
+				
+				$login.dialog( "option", "buttons", 
+				  [
+					{
+						text: "Login",
+						icons: {
+							primary: "ui-icon-check"
+						},
+						click: function() {							
+							onLoginButtonClick();
+							$(this).dialog("close");
+						}
+					},
+					{
+						text: "Register",
+						icons: {
+							primary: "ui-icon-document"
+						},
+						click: function() {
+							$(this).dialog("close");
+							showRegisterDialog();
+						}
+					}
+				  ]
+				);
+			}
+			
+			function loginFormLoaded() {
+				// Hide the close button from the title bar
+				$(".ui-dialog-titlebar-close").hide();
+			}
+				
+			function onLoginButtonClick() {
+				var username = $("#name").val();
+				var password = $("#password").val();
+				
+				user.login(username, password, function(result) {
+					if (!result) {
+						utils.showErrorMessage("Unable to login", "We were unable to log you in. <br/>Make sure your username and password are valid.", showLoginDialog);
+					} else {
+						utils.redirect("dashboard.html");
+					}
+				});				
+			}
+			
+			function showRegisterDialog() {
+				$login = utils.showDialog("dialogs/register.html", "Create new account", loginFormLoaded);
+				$login.dialog("option", "width", 550);
+				$login.dialog("option", "height", 450);
+				$login.dialog("option", "closeOnEscape", false );
+				$login.addClass("no-close");
+				
+				$login.dialog( "option", "buttons", 
+				  [
+					{
+						text: "Create new account",
+						icons: {
+							primary: "ui-icon-check"
+						},
+						click: function() {
+							var username = $("#name").val();
+							var password = $("#password").val();
+							var email = $("#email").val();
+							user.createAccount(username, password, email, function(result) {
+								if (result != "ok")
+									utils.showErrorMessage("Error", "Unable to create account: " + result, showLoginDialog);
+								else
+									utils.showMessage("Success", "Account created.", showLoginDialog);
+							});
+							
+							$(this).dialog("close");							
+						}
+					},
+					{
+						text: "Cancel",	
+						click: function() {
+							$(this).dialog("close");
+							showLoginDialog();
+						}
+					}
+				  ]
+				);
+			}
+		});
+
+
+	</script>
+	
+  </body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Test JSON</title>
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">	
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src="js/utils.js"></script>
+</head>
+<body>
+	<script>
+	
+		$(document).ready(function(){
+			var method = {"call": "getBook"};
+			$.getJSON("lib/testjson.php", method, jsonResult);
+		});
+		
+		function jsonResult(data) {
+			$("#main").data = data;
+			
+			var setBookTitle = function() {
+				$("#divReturn").text(data.title);				
+			}	
+			
+			utils.showDialog("dialogs/test.html", "Book", setBookTitle);
+		};
+
+	</script>
+
+</body>
+</html>

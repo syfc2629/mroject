@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Mroject</title>
+	<link rel="stylesheet" href="css/jquery-ui.css">
+	<link rel="stylesheet" href="css/jquery-ui.theme.css">			
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/loading.css">
+
+	<script src="js/jquery.js"></script>
+	<script src="js/jquery-ui.js"></script>
+	<script src="js/utils.js"></script>
+	<script src="js/user.js"></script>
+</head>
+<body style="background-color: #72a9d3;">
+	<script>
+		$(document).ready(function(){
+			if (!user.isLoggerIn())
+				utils.redirect("login.html");
+			$("#btnLogout").button().click(function() {
+				user.logout();
+				utils.redirect("index.html");
+			});
+			
+			$("#btnPrj1").button();
+			$("#btnPrj2").button()
+			$("#btnPrj3").button()
+			$("#btn1").button()
+			$("#btn2").button()
+			$("#btn3").button()			
+		});
+	</script>
+
+	
+	<style>
+		.leftBar {
+			width: 250px; 
+			height: 100%; 
+			position: absolute; 
+			left: 0px; 
+			top: 0px; 
+			background-color: #003366;
+		}
+		.leftBarContent {
+			padding-top: 50px;
+		}
+		.topBar {
+			width: 100%; 
+			height: 37px; 
+			position: absolute; 
+			left: 0px; 
+			top: 0px; 
+			background-color: #003366;
+		}
+		
+		.content {
+			padding-left: 250px; 
+			padding-top: 40px;
+		}
+		
+		.profilePicImg {
+			border-radius: 50%;
+			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+			width: 100px;
+			height: 100px;
+			margin: 5px;
+		}
+		
+		.classLeftButtons {
+
+		}
+		
+		hr { 
+			border: 0; 
+			height: 1px; 
+			background-image: linear-gradient(90deg, #003366, #d0e5f5, #003366);
+		}
+	</style>
+	
+	<div class="leftBar">
+		<div class="leftBarContent">
+			<div style="width: 250px; text-align: center; color: #D0E5F5;">
+				<span style="font-size: 1.5em;">Violin Iliev</span> <br/>
+				<img class="profilePicImg" src="img/samplePic.jpg" /><br/>
+				Projects:
+				<hr />
+				<div class="classLeftButtons">				
+					<button id="btnPrj1" style="width: 100%">Calculator</button>	<br/>
+					<button id="btnPrj2" style="width: 100%">Rubic Cube</button>	<br/>
+					<button id="btnPrj3" style="width: 100%">Reports Machine</button>	<br/>
+				</div>
+				<br/>
+				Manage:
+				<hr/>
+				<div class="classLeftButtons">	
+					<button id="btn1" style="width: 100%">Manage Projects</button>	<br/>
+					<button id="btn2" style="width: 100%">My Team</button>	<br/>
+					<button id="btn3" style="width: 100%">Settings</button>	<br/>
+				</div>
+			</div>
+		</div>	
+	</div>
+	
+	<div class="topBar">
+		<div style="float: right;">
+			<button id="btnLogout">Log out</button>		
+		</div>
+	</div>
+	
+	<div class="content">
+		<div style="font-size: 1.5em; color: #D0E5F5;">Select a project from the left...</div>
+	</div>
+
+</body>
+</html>
