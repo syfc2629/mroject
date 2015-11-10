@@ -52,83 +52,62 @@ if ($method == "getProject") {
 	echo json_encode($res, JSON_FORCE_OBJECT);
 } else if ($method == "getProjectUsers") {
 	$prjid = $_GET['id'];
-	/*
-	$res = array(
-		"result" => "ok"
-	);
-	
-	$fullname = $_GET['fullname'];
-	$username = $_GET['username'];
-	$password = $_GET['password'];
-	$email = $_GET['email'];
-	
 	$db = new db();
 	$db->open();
 	
-	// Check if username exists
-	$stmt = $db->pdo()->prepare('SELECT username FROM users WHERE username = :name');
-	$stmt->execute(array('name' => $username));
-	$result = $stmt->fetch();
-	if ($result) {
-		$db->close();
-		echo json_encode(array("result" => "Username already exists!"), JSON_FORCE_OBJECT);
-		return;
-	}
+	$res = null;
+	$stmt = $db->pdo()->prepare('SELECT * FROM projectusers where prjid=:projectid');
+	$stmt->execute(array("projectid"=>$prjid));
 	
-	// Check if email exists
-	$stmt = $db->pdo()->prepare('SELECT email FROM users WHERE email = :email');
-	$stmt->execute(array('email' => $email));
-	$result = $stmt->fetch();
-	if ($result) {
-		$db->close();
-		echo json_encode(array("result" => "Email already exists!"), JSON_FORCE_OBJECT);
-		return;
+	$numRows = 0;
+	while ($row= $stmt->fetch()) {
+		if ($res == null) 
+			$res = $row;
+		else
+			$res = array($res, $row);
+		$numRows++;
 	}
+		
+	$res = array("rows"=>$numRows, "data"=>$res);
 	
-	// Create new record
-	$stmt = $db->pdo()->prepare("INSERT INTO users(username, fullname, password, email, role) VALUES (:username, :fullname, :password, :email, 'creator')");
-	$params = array(
-			'username' => $username, 
-			'fullname' => $fullname, 
-			'password' => md5($password), 
-			'email' => $email
-		);
-	$result = $stmt->execute($params);
-	if ($result) {
-		$res = array("result" => "ok");
-	} else {
-		$res = array("result" => "Failed to insert record");
-	}
-	*/
 	$db->close();
 	echo json_encode($res, JSON_FORCE_OBJECT);
 } else if($method == "deleteProject") {
 	$prjid = $_GET['id'];
-
 	$db = new db();
 	$db->open();
-	/*
-	// Get UserID
-	$stmt = $db->pdo()->prepare('SELECT userid FROM users WHERE username = :name');
-	$stmt->execute(array('name' => $username));
-	$result = $stmt->fetch();
-	if (!$result) {
-		$db->close();
-		return;
-	}
-	$userid = $result["userid"];
-
-	// Delete Session
-	$stmt = $db->pdo()->prepare('DELETE FROM sessions WHERE sessionid = :sessionid AND userid = :userid');
-	$stmt->execute(array('sessionid' => $sessionid, 'userid' => $userid));
-	*/
+	$stmt=$db->pdo()->prepare('DELETE FROM projectusers where userid=:userid and prjid=:prjid');
+	$result=$stmt->execute(array("userid"=>$userid,"prjid"=>$prjid));
 	$db->close();
+	if ($result) {
+		$res = array("result" => "Project deleted!");
+	} else {
+		$res = array("result" => "Failed to delete project");
+	}
+	echo json_encode($res, JSON_FORCE_OBJECT);	
 } else if($method == "renameProject") {
 	$prjid = $_GET['id'];
 	$name = $_GET['name'];
+	$db = new db();
+	$db->open();
+	$stmt=$db->pdo()->prepare('UPDATE projects SET name =:name where prjid=:prjid');
+	$result=$stmt->execute(array("name"=>$name,"prjid"=>$prjid));
+
+	$db->close();
+	if ($result) {
+		$res = array("result" => "Project renamed!");
+	} else {
+		$res = array("result" => "Failed to rename project");
+	}
+	echo json_encode($res, JSON_FORCE_OBJECT);	
+} else if($method == "createProject") {
+	$n = $_GET['name'];
+	$d = $_GET['desc'];
 
 	$db = new db();
 	$db->open();
+	$stmt=$db->pdo()->prepare("INSERT INTO projects (name, description) VALUES (:name, :desc)");
+	$result=$stmt->execute(array("name"=>$n,"desc"=>$d));
 	/*
 	// Get UserID
 	$stmt = $db->pdo()->prepare('SELECT userid FROM users WHERE username = :name');
@@ -145,51 +124,35 @@ if ($method == "getProject") {
 	$stmt->execute(array('sessionid' => $sessionid, 'userid' => $userid));
 	*/
 	$db->close();
-} else if($method == "createProject") {
-	$name = $_GET['name'];
-	$desc = $_GET['desc'];
-
-	$db = new db();
-	$db->open();
-	/*
-	// Get UserID
-	$stmt = $db->pdo()->prepare('SELECT userid FROM users WHERE username = :name');
-	$stmt->execute(array('name' => $username));
-	$result = $stmt->fetch();
-	if (!$result) {
-		$db->close();
-		return;
+	if ($result) {
+		$res = array("result" => "Project created!");
+	} else {
+		$res = array("result" => "Failed to create project");
 	}
-	$userid = $result["userid"];
-
-	// Delete Session
-	$stmt = $db->pdo()->prepare('DELETE FROM sessions WHERE sessionid = :sessionid AND userid = :userid');
-	$stmt->execute(array('sessionid' => $sessionid, 'userid' => $userid));
-	*/
-	$db->close();	
+	echo json_encode($res, JSON_FORCE_OBJECT);	
 } else if($method == "addUserToProject") {
 	$userid = $_GET['userid'];
 	$prjid = $_GET['prjid'];
 	$roleid = $_GET['roleid'];
-
 	$db = new db();
 	$db->open();
-	/*
-	// Get UserID
-	$stmt = $db->pdo()->prepare('SELECT userid FROM users WHERE username = :name');
-	$stmt->execute(array('name' => $username));
-	$result = $stmt->fetch();
-	if (!$result) {
+	$stmt=$db->pdo()->prepare("select userid,prjid,roleid from projectusers where userid=:userid and prjid=:prjid and roleid=:roleid");
+	$stmt->execute(array("userid"=>$userid,"prjid"=>$prjid,"roleid"=>$roleid));
+	$exist=$stmt->fetch();
+	if($exist){
 		$db->close();
+		echo json_encode(array("result" => "User already exists!"), JSON_FORCE_OBJECT);
 		return;
 	}
-	$userid = $result["userid"];
-
-	// Delete Session
-	$stmt = $db->pdo()->prepare('DELETE FROM sessions WHERE sessionid = :sessionid AND userid = :userid');
-	$stmt->execute(array('sessionid' => $sessionid, 'userid' => $userid));
-	*/
+	$stmt=$db->pdo()->prepare("INSERT INTO projectusers (userid,prjid,roleid) VALUES(:userid,:prjid,:roleid)");
+	$result=$stmt->execute(array("userid"=>$userid,"prjid"=>$prjid,"roleid"=>$roleid));
 	$db->close();	
+	if ($result) {
+		$res = array("result" => "User added!");
+	} else {
+		$res = array("result" => "Failed to add user");
+	}
+	echo json_encode($res, JSON_FORCE_OBJECT);
 } else {
 	$error = array(
 		"message" => "Unknown function"
