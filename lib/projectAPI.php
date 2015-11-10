@@ -76,8 +76,10 @@ if ($method == "getProject") {
 	$prjid = $_GET['id'];
 	$db = new db();
 	$db->open();
-	$stmt=$db->pdo()->prepare('DELETE FROM projectusers where userid=:userid and prjid=:prjid');
-	$result=$stmt->execute(array("userid"=>$userid,"prjid"=>$prjid));
+	$stmt=$db->pdo()->prepare('Delete FROM projects where prjid=:prjid');
+	$stmt->execute(array("prjid"=>$prjid));
+	$stmt=$db->pdo()->prepare('DELETE FROM projectusers where  prjid=:prjid');
+	$result=$stmt->execute(array("prjid"=>$prjid));
 	$db->close();
 	if ($result) {
 		$res = array("result" => "Project deleted!");
